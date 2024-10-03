@@ -18,6 +18,68 @@ function ask_confirmation() {
     });
 }
 
+/**
+ * Tarlogic - Función para generar el vector CVSS 4.0
+ */
+function updateCVSS4Vector() {
+
+    let form = document.getElementById('cvss4');
+
+    let vector = 'CVSS:4.0';
+
+    for (let i = 0; i < form.elements.length; i++) {
+        let field = form.elements[i];
+        if (field.tagName === 'SELECT') {
+            vector += `/${field.name}:${field.value}`;
+        }
+    }
+
+    document.getElementById('cvss4-vector').textContent = vector;
+    updateCVSS4Score(vector);
+    $('#cvss_v3_vector').val(vector);
+}
+
+/**
+ * Tarlogic - Función para actualizar el vector CVSS 4.0 en la interfaz
+ */
+function updateCVSS4Score(vector) {
+    let cvss4Vector = new Vector();
+    cvss4Vector.updateMetricsFromVectorString(vector);
+    let cvssInstance = new CVSS40(cvss4Vector);
+    let cvssScore = cvssInstance.calculateScore()
+
+    document.getElementById('cvss4-score').textContent = cvssScore;
+    document.getElementById('cvss4-risk').textContent = cvssInstance.calculateSeverityRating(cvssScore);
+    if (isNaN(cvssScore)) {
+        $('#cvss_v3_score').val(0);
+    } else {
+        $('#cvss_v3_score').val(cvssScore);
+    }
+}
+
+/**
+ * Tarlogic - Función para rellenar automáticamente el form del vector CVSS 4.0 en base a un vector
+ */
+
+function populateCVSS4Form(vector) {
+    
+    let metrics = vector.replace('CVSS:4.0/', '').split('/');
+    
+    metrics.forEach(metric => {
+        let [key, value] = metric.split(':');  
+        
+        let selectElement = document.querySelector(`select[name="${key}"]`);
+        
+        if (selectElement) {
+            selectElement.value = value;
+        }
+    });
+
+    updateCVSS4Vector()
+    updateCVSS4Score(document.getElementById('cvss4-vector').textContent)
+}
+
+
 $(function () {
     marked.setOptions({sanitize: true});
 

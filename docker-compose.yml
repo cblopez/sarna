@@ -5,6 +5,10 @@ services:
     volumes:
       - vol_sarna_upload:/sarna/uploaded_data
       - vol_sarna_config:/sarna/config
+      # Eliminar si no se desarrolla
+      - ./templates:/sarna/templates
+      - ./static/js:/sarna/static/js
+      - ./static/css:/sarna/static/css
     environment:
       FLASK_ENV: 'production'
       SQLALCHEMY_DATABASE_URI: 'postgres://user:password@psql/sarna'

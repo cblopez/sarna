@@ -11,12 +11,113 @@
         </div>
         <div class="col-lg-5 mt-5">
             <div id="cvssboard"></div>
+            <div id="cvss4board">
+                <div id="cvss4-form">
+                    <form id="cvss4">
+                        <h3>Base Metrics</h3>
+                        <label for="attackVector">Attack Vector (AV):</label>
+                        <select id="attackVector" name="AV" onchange="updateCVSS4Vector()" required="required">
+                            <option value="N" selected>Network (N)</option>
+                            <option value="A">Adjacent (A)</option>
+                            <option value="L">Local (L)</option>
+                            <option value="P">Physical (P)</option>
+                        </select><br>
+                
+                        <label for="attackComplexity">Attack Complexity (AC):</label>
+                        <select id="attackComplexity" name="AC" onchange="updateCVSS4Vector()" required="required">
+                            <option value="L" selected>Low (L)</option>
+                            <option value="H">High (H)</option>
+                        </select><br>
+
+                        <label for="attackRequirements">Attack Requirements (AT):</label>
+                        <select id="attackRequirements" name="AT" onchange="updateCVSS4Vector()" required="required">
+                            <option value="N" selected>None (N)</option>
+                            <option value="P">Present (P)</option>
+                        </select><br>
+                
+                        <label for="privilegesRequired">Privileges Required (PR):</label>
+                        <select id="privilegesRequired" name="PR" onchange="updateCVSS4Vector()" required="required">
+                            <option value="N" selected>None (N)</option>
+                            <option value="L">Low (L)</option>
+                            <option value="H">High (H)</option>
+                        </select><br>
+                
+                        <label for="userInteraction">User Interaction (UI):</label>
+                        <select id="userInteraction" name="UI" onchange="updateCVSS4Vector()" required="required">
+                            <option value="N" selected>None (N)</option>
+                            <option value="P">Passive (P)</option>
+                            <option value="A">Active (A)</option>
+                        </select><br>
+                
+                        <label for="confidentiality">Confidentiality (VC):</label>
+                        <select id="confidentiality" name="VC" onchange="updateCVSS4Vector()" required="required">
+                            <option value="H" selected>High (H)</option>
+                            <option value="L">Low (L)</option>
+                            <option value="N">None (N)</option>
+                        </select><br>
+                
+                        <label for="integrity">Integrity (VI):</label>
+                        <select id="integrity" name="VI" onchange="updateCVSS4Vector()" required="required">
+                            <option value="H">High (H)</option>
+                            <option value="L">Low (L)</option>
+                            <option value="N" selected>None (N)</option>
+                        </select><br>
+                
+                        <label for="availability">Availability (VA):</label>
+                        <select id="availability" name="VA" onchange="updateCVSS4Vector()" required="required">
+                            <option value="H">High (H)</option>
+                            <option value="L">Low (L)</option>
+                            <option value="N" selected>None (N)</option>
+                        </select><br><br>
+
+                        <label for="confidentiality">Subsequent Confidentiality (SC):</label>
+                        <select id="confidentiality" name="SC" onchange="updateCVSS4Vector()" required="required">
+                            <option value="H">High (H)</option>
+                            <option value="L">Low (L)</option>
+                            <option value="N" selected>None (N)</option>
+                        </select><br>
+                
+                        <label for="integrity">Subsequent Integrity (SI):</label>
+                        <select id="integrity" name="SI" onchange="updateCVSS4Vector()" required="required">
+                            <option value="H">High (H)</option>
+                            <option value="L">Low (L)</option>
+                            <option value="N" selected>None (N)</option>
+                        </select><br>
+                
+                        <label for="availability">Subsequent Availability (SA):</label>
+                        <select id="availability" name="SA" onchange="updateCVSS4Vector()" required="required">
+                            <option value="H">High (H)</option>
+                            <option value="L">Low (L)</option>
+                            <option value="N" selected>None (N)</option>
+                        </select><br><br>
+                    </form>
+                
+                    <h4>CVSS 4.0 Vector:</h4>
+                    <pre id="cvss4-vector"></pre>
+
+                    <h4>CVSS 4.0 Risk:</h4>
+                    <i id="cvss4-risk"></i> (<i id="cvss4-score"></i>)
+                </div>
+                
+            </div>
         </div>
     </div>
 
     <script>
         $(document).ready(function () {
+            
+            let cvss_guardado = $('#cvss_v3_vector').val();
 
+            // Tarlogic - Preload de la UI
+            // Tarlogic - Fallback por si alguien le da al botón atrás una vez creado un finding, para que el CVSS 4.0 se guarde
+            if(cvss_guardado){
+                populateCVSS4Form(cvss_guardado);
+            } else {
+                updateCVSS4Vector();
+            }
+            
+            // Tarlogic - Calculadora 3.1 vieja
+            /**
             var cvss = new CVSS("cvssboard", {
                 onchange: function () {
                     var vector = cvss.get()['vector'];
@@ -30,6 +131,8 @@
                 }
             });
             cvss.set($('#cvss_v3_vector').val());
+            */
+            
         });
     </script>
 {% endblock %}

@@ -13,7 +13,95 @@
             <h5>CVSS Calculator</h5>
 
             <div class="row mx-4 mt-2">
-                <div id="cvssboard"></div>
+                <div id="cvss4board">
+                    <div id="cvss4-form">
+                        <form id="cvss4">
+                            <h3>Base Metrics</h3>
+                            <label for="attackVector">Attack Vector (AV):</label>
+                            <select id="attackVector" name="AV" onchange="updateCVSS4Vector()" required="required">
+                                <option value="N" selected>Network (N)</option>
+                                <option value="A">Adjacent (A)</option>
+                                <option value="L">Local (L)</option>
+                                <option value="P">Physical (P)</option>
+                            </select><br>
+                    
+                            <label for="attackComplexity">Attack Complexity (AC):</label>
+                            <select id="attackComplexity" name="AC" onchange="updateCVSS4Vector()" required="required">
+                                <option value="L" selected>Low (L)</option>
+                                <option value="H">High (H)</option>
+                            </select><br>
+    
+                            <label for="attackRequirements">Attack Requirements (AT):</label>
+                            <select id="attackRequirements" name="AT" onchange="updateCVSS4Vector()" required="required">
+                                <option value="N" selected>None (N)</option>
+                                <option value="P">Present (P)</option>
+                            </select><br>
+                    
+                            <label for="privilegesRequired">Privileges Required (PR):</label>
+                            <select id="privilegesRequired" name="PR" onchange="updateCVSS4Vector()" required="required">
+                                <option value="N" selected>None (N)</option>
+                                <option value="L">Low (L)</option>
+                                <option value="H">High (H)</option>
+                            </select><br>
+                    
+                            <label for="userInteraction">User Interaction (UI):</label>
+                            <select id="userInteraction" name="UI" onchange="updateCVSS4Vector()" required="required">
+                                <option value="N" selected>None (N)</option>
+                                <option value="P">Passive (P)</option>
+                                <option value="A">Active (A)</option>
+                            </select><br>
+                    
+                            <label for="confidentiality">Confidentiality (VC):</label>
+                            <select id="confidentiality" name="VC" onchange="updateCVSS4Vector()" required="required">
+                                <option value="H">High (H)</option>
+                                <option value="L">Low (L)</option>
+                                <option value="N" selected>None (N)</option>
+                            </select><br>
+                    
+                            <label for="integrity">Integrity (VI):</label>
+                            <select id="integrity" name="VI" onchange="updateCVSS4Vector()" required="required">
+                                <option value="H">High (H)</option>
+                                <option value="L">Low (L)</option>
+                                <option value="N" selected>None (N)</option>
+                            </select><br>
+                    
+                            <label for="availability">Availability (VA):</label>
+                            <select id="availability" name="VA" onchange="updateCVSS4Vector()" required="required">
+                                <option value="H">High (H)</option>
+                                <option value="L">Low (L)</option>
+                                <option value="N" selected>None (N)</option>
+                            </select><br><br>
+    
+                            <label for="confidentiality">Subsequent Confidentiality (SC):</label>
+                            <select id="confidentiality" name="SC" onchange="updateCVSS4Vector()" required="required">
+                                <option value="H">High (H)</option>
+                                <option value="L">Low (L)</option>
+                                <option value="N" selected>None (N)</option>
+                            </select><br>
+                    
+                            <label for="integrity">Subsequent Integrity (SI):</label>
+                            <select id="integrity" name="SI" onchange="updateCVSS4Vector()" required="required">
+                                <option value="H">High (H)</option>
+                                <option value="L">Low (L)</option>
+                                <option value="N" selected>None (N)</option>
+                            </select><br>
+                    
+                            <label for="availability">Subsequent Availability (SA):</label>
+                            <select id="availability" name="SA" onchange="updateCVSS4Vector()" required="required">
+                                <option value="H">High (H)</option>
+                                <option value="L">Low (L)</option>
+                                <option value="N" selected>None (N)</option>
+                            </select><br><br>
+                        </form>
+                    
+                        <h4>CVSS 4.0 Vector:</h4>
+                        <pre id="cvss4-vector"></pre>
+    
+                        <h4>CVSS 4.0 Risk:</h4>
+                        <i id="cvss4-risk"></i> (<i id="cvss4-score"></i>)
+                    </div>
+                    
+                </div>
             </div>
 
             <h5 class="mt-4">Solution Selector</h5>
@@ -47,24 +135,20 @@
             <script>
                 $(document).ready(function () {
 
-                    var cvss = new CVSS("cvssboard", {
-                        onchange: function () {
-                            var vector = cvss.get()['vector'];
-                            var score = parseFloat(cvss.get()['score']);
-                            $('#cvss_v3_vector').val(vector);
-                            if (isNaN(score)) {
-                                $('#cvss_v3_score').val(0);
-                            } else {
-                                $('#cvss_v3_score').val(score);
-                            }
-                        }
-                    });
+                    // Tarlogic - Pre-popular el formulario de CVSS 4.0
+                    let vector_cvss = $('#cvss_v3_vector').val();
+
+                    if (vector_cvss.substring(0,9) === 'CVSS:4.0/'){
+                        populateCVSS4Form(vector_cvss);
+                    }
+
+                    // Si no, no se hace nada porque obligamos al usuario a cargarlo
                     var solutions = {{ solutions_dict|tojson }};
                     var selected_text = "";
                     var solution_preview = $("div#solution_select_desc");
                     solution_preview.hide();
 
-                    cvss.set($('#cvss_v3_vector').val());
+                    
 
                     $("#solution_select").change(function () {
                         var val = $(this).val()
